@@ -29,7 +29,7 @@ class ImpossibleToTestGame
     loop do
       puts 'Choose a digit between 0 and 9'
       @guess = gets.chomp
-      break if @guess.match(/^[0-9]$/)
+      break if @guess&.match(/^[0-9]$/)
     end
   end
 
@@ -76,7 +76,7 @@ class NumberGame
   end
 
   def verify_input(number)
-    return number if number.match?(/^[0-9]$/)
+    number if number.match?(/^[0-9]$/)
   end
 
   def game_over?
@@ -103,6 +103,6 @@ end
 
 # game = NumberGame.new
 # game.play_game
-
+#
 # game = ImpossibleToTestGame.new
 # game.play_game
