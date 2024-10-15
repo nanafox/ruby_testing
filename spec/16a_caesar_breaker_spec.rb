@@ -44,7 +44,9 @@ describe CaesarBreaker do
     # Located inside #decrypt (Public Script Method)
 
     # Method with Outgoing Command -> Test that a message is sent
-    xit 'sends translate 26 times' do
+    it 'sends translate 26 times' do
+      expect(translator).to receive(:translate).exactly(26).times
+      phrase.decrypt
     end
   end
 
@@ -70,22 +72,22 @@ describe CaesarBreaker do
       # there are puts statements in #display_file_location so let's stub that
       # method to clean up the test output.
       before do
-        allow(Dir).to receive(:exist?).and_return(false)
-        allow(Dir).to receive(:mkdir)
-        allow(File).to receive(:open)
+        allow(FileUtils).to receive(:mkdir_p).and_return(['16_cipher'])
+        allow(File).to receive(:write)
         allow(phrase).to receive(:display_file_location)
       end
 
       # ASSIGNMENT #2
       # Write the following 3 tests:
 
-      xit 'sends message to check the existence of the 16_cipher directory' do
+      it 'sends message to create a directory' do
+        expect(FileUtils).to receive(:mkdir_p)
+        phrase.save_decrypted_messages
       end
 
-      xit 'sends message to create a directory' do
-      end
-
-      xit 'sends message to create a file' do
+      it 'sends message to create a file' do
+        expect(File).to receive(:write)
+        phrase.save_decrypted_messages
       end
     end
 
@@ -95,15 +97,28 @@ describe CaesarBreaker do
     # Method with Outgoing Commands -> Test that the messages are sent
     context 'when the directory exists' do
       before do
+        allow(Dir).to receive(:exist?).and_return true
+        allow(FileUtils).to receive(:mkdir_p).and_return(['16_cipher'])
+        allow(File).to receive(:write)
+        allow(phrase).to receive(:display_file_location)
       end
 
-      xit 'sends message to check the existence of the 16_cipher directory' do
+      it 'confirms the existence of the 16_cipher directory' do
+        phrase.save_decrypted_messages
+
+        expect(Dir.exist?('16_cipher')).to be true
       end
 
-      xit 'does not send message to create a directory' do
+      it 'returns the same directory' do
+        expect(FileUtils).to receive(:mkdir_p).with('16_cipher')
+
+        phrase.save_decrypted_messages
       end
 
-      xit 'sends message to create a file' do
+      it 'sends message to create a file' do
+        expect(File).to receive(:write)
+
+        phrase.save_decrypted_messages
       end
     end
 
@@ -114,8 +129,8 @@ describe CaesarBreaker do
     context 'when file is saved successfully' do
       before do
         allow(Dir).to receive(:exist?).and_return(false)
-        allow(Dir).to receive(:mkdir)
-        allow(File).to receive(:open)
+        allow(FileUtils).to receive(:mkdir_p)
+        allow(File).to receive(:write)
         allow(phrase).to receive(:display_file_location)
       end
 
@@ -131,8 +146,8 @@ describe CaesarBreaker do
     context 'when rescuing an error' do
       before do
         allow(Dir).to receive(:exist?).and_return(false)
-        allow(Dir).to receive(:mkdir)
-        allow(File).to receive(:open).and_raise(Errno::ENOENT)
+        allow(FileUtils).to receive(:mkdir_p)
+        allow(File).to receive(:write).and_raise(Errno::ENOENT)
         allow(phrase).to receive(:puts).twice
       end
 
@@ -157,7 +172,9 @@ describe CaesarBreaker do
   describe '#save_to_yaml' do
     # Method with Outgoing Command -> Test that a message is sent
 
-    xit 'dumps to yaml' do
+    it 'dumps to yaml' do
+      expect(phrase).to receive(:save_to_yaml)
+      phrase.save_decrypted_messages
     end
   end
 end
