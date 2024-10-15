@@ -5,9 +5,9 @@ require 'yaml'
 # Contains methods to save or load a game
 module Database
   def save_decrypted_messages
-    Dir.mkdir '16_cipher' unless Dir.exist? '16_cipher'
+    FileUtils.mkdir_p '16_cipher'
     filename = "#{create_filename}.yaml"
-    File.open("16_cipher/#{filename}", 'w') { |file| file.write save_to_yaml }
+    File.write("16_cipher/#{filename}", save_to_yaml)
     display_file_location(filename)
   rescue SystemCallError => e
     puts "Error while writing to file #{filename}."
